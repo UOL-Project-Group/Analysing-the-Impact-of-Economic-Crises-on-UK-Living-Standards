@@ -749,8 +749,8 @@ def lasso_feature_selection(df, target_column='GDP', test_size=0.2, random_state
 
     return selected_features
 
-def generate_chart_summary(fig, prompt):
-    genai.configure(api_key="AIzaSyCOdwdzuUplcSuVFa-mgEGRDsljGwEaYZk")
+def generate_chart_summary(fig, prompt,API_Key):
+    genai.configure(api_key=API_Key)
     model = genai.GenerativeModel('gemini-2.0-flash-lite')
     buf = io.BytesIO()
     fig.savefig(buf, format='png')
@@ -765,7 +765,7 @@ def generate_chart_summary(fig, prompt):
     response = model.generate_content(contents)
     return response.text
 
-def current():
+def current(API_Key):
     all_dfs = load_dataset("data", [2008, 2022])
     target_step_column = 'Cap rate'
     annotate_events = {
@@ -789,7 +789,10 @@ def current():
 
                 # 补充文字描述
                 prompt = "Describe the chart in 1 paragraph, starting with describing the trend (include statistics if applicable), followed by the analysis in relation to economics knowledge. Your response should only include the answer. Do not provide any further explanation."
-                summary = generate_chart_summary(fig, prompt=prompt)
+                if API_Key == "":
+                    summary = "No AI support yet"
+                else:
+                    summary = generate_chart_summary(fig, prompt, API_Key)
                 print("下面是打印的图像描述")
                 print("Summary of the chart:")
                 print(summary)
@@ -824,7 +827,9 @@ def merged_analysis():
         show_lasso = st.checkbox("LASSO feature selection", value=True)
     with col5:
         show_timeseries = st.checkbox("TimeSeries model", value=True)
-
+    # 添加文本输入框
+    user_input = st.text_input("",placeholder="Please enter the AI API for graphical summary:", key="user_input")
+    print(f"用户输入的文本: {user_input==""}")
     if st.button('Generate All Visualizations'):
         with st.spinner(f"Generating visualizations for {selected_year}..."):
             # 确保数据已加载
@@ -849,7 +854,9 @@ def merged_analysis():
                         plotting(df, file_name)
                         st.pyplot(plt)
                         plt.clf()
-                if selected_year ==2022: current()
+                if selected_year ==2022:
+                    current(user_input)
+                    # API_Key = "AIzaSyCOdwdzuUplcSuVFa-mgEGRDsljGwEaYZk"
 
             # 2. 显示合并指标折线图
             if show_combined:
