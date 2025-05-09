@@ -23,7 +23,7 @@ from data_visualization import (
 
 def main():
     # File paths
-    tax_input_file = 'csv/tax-benefits-statistics-time-series-v3-filtered-2025-03-17T15-44-25Z_data.xlsx
+    tax_input_file = 'csv/tax-benefits-statistics-time-series-v3-filtered-2025-03-17T15-44-25Z_data.xlsx'
     unemp_input_file = 'csv/Inflation_monthly_data.csv'
     infl_input_file = 'csv/Inflation_monthly_data.csv'
     tax_output_csv = 'cleaned_tax_benefits_data.csv'
